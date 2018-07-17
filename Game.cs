@@ -9,7 +9,8 @@ namespace Game
 		public string[] hidemap;
 		private bool isCharaLarge=true;
 		private static int jumpspeed;
-		private static bool isExit = false;
+		private bool isClear = false;
+		private static bool isGameOver = false;
 		public Mario()
 		{}
 		private void Check()
@@ -17,7 +18,7 @@ namespace Game
 			switch(this.hidemap[y][x])
 			{
 				case 'A':
-					isExit=true;
+					isGameOver=true;
 					this.Draw();
 					Console.SetCursorPosition(x,y);
 					Console.Write("A");
@@ -26,6 +27,45 @@ namespace Game
 					Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
 					Console.Write("GameOver");
 					Console.ReadKey();
+					break;
+				case '>':
+					this.Draw();
+					Console.SetCursorPosition(x,y);
+					Console.Write(">");
+					Console.SetCursorPosition(x+1,y);
+					Console.Write(">");
+					isGameOver=true;
+					Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
+					Console.Write("GameOver");
+					Console.ReadKey();
+					break;
+				case '<':
+					this.Draw();
+					Console.SetCursorPosition(x,y);
+					Console.Write("<");
+					Console.SetCursorPosition(x-1,y);
+					Console.Write("<");
+					isGameOver=true;
+					Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
+					Console.Write("GameOver");
+					Console.ReadKey();
+					break;
+				case 'V':
+					isGameOver=true;
+					this.Draw();
+					Console.SetCursorPosition(x,y);
+					Console.Write("V");
+					Console.SetCursorPosition(x,y+1);
+					Console.Write("V");
+					Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
+					Console.Write("GameOver");
+					Console.ReadKey();
+					break;
+				case 'G':
+					Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
+					Console.Write("Clear!!");
+					Console.ReadKey();
+					isClear=true;
 					break;
 			}
 		}
@@ -37,20 +77,20 @@ namespace Game
 					x--;
 					if(x<1)
 						x=1;
-					if(this.hidemap[y][x]=='-')
+					if(this.hidemap[y][x]=='-' || this.hidemap[y][x]=='|')
 						x++;
 					break;
 				case 2:// >>
 					x++;
 					if(x>(this.hidemap[0].Length-2))
-						x=this.map[0].Length-2;
-					if(this.map[y][x]=='-')
+						x=this.hidemap[0].Length-2;
+					if(this.map[y][x]=='-' || this.hidemap[y][x]=='|')
 						x--;
 					break;
 				case 3:// A
 					if(y<(this.hidemap.Length-1))
 					{
-						if(this.map[y+1][x]=='-')
+						if(this.hidemap[y+1][x]=='-')
 						jumpspeed = 2;
 					}
 					break;
@@ -61,61 +101,86 @@ namespace Game
 		public void Run()
 		{
 			Console.CursorVisible=false;
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-			while(!isExit)
+			while(!isClear)
 			{
-				if(Console.KeyAvailable)
+				Stopwatch sw = new Stopwatch();
+				sw.Start();
+				Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
+				Console.Write("Ready...");
+				Console.ReadKey();
+				Console.Clear();
+				for(int c=0;c<(this.hidemap.Length);c++)
 				{
-					ConsoleKeyInfo kb = Console.ReadKey(true);
-					switch(kb.Key)
+					for(int d=0;d<(this.hidemap[c].Length);d++)
 					{
-						case ConsoleKey.LeftArrow:
-							move(1);
-							break;
-						case ConsoleKey.RightArrow:
-							move(2);
-							break;
-						case ConsoleKey.UpArrow:
-							move(3);
-							break;
-						case ConsoleKey.Escape:
-							isExit=true;
-							Console.CursorVisible = true;
-							break;
+						if(this.hidemap[c][d]=='O')
+						{
+							x=d;
+							y=c;
+						}
 					}
 				}
-				TimeSpan ts = sw.Elapsed;
-				if(ts.TotalSeconds>=0.2)
+				this.Draw();
+				isGameOver=false;
+				while(!isGameOver && !isClear)
 				{
-					for(int a = System.Math.Abs(jumpspeed);a>-1;a--)
+					if(Console.KeyAvailable)
 					{
-						if(jumpspeed<0)
+						ConsoleKeyInfo kb = Console.ReadKey(true);
+						switch(kb.Key)
 						{
-						if(y<(this.map.Length-1))
-						{
-							if(this.map[y+1][x]=='-')
-								y--;
-						}
-							y++;
-						}
-						if(jumpspeed>0)
-						{
-						if(y>0)
-						{
-							if(this.map[y-1][x] =='-')
-								y++;
-						}
-							y--;
+							case ConsoleKey.LeftArrow:
+								move(1);
+								break;
+							case ConsoleKey.RightArrow:
+								move(2);
+								break;
+							case ConsoleKey.UpArrow:
+								move(3);
+								break;
+							case ConsoleKey.Escape:
+								Console.CursorVisible = true;
+								Environment.Exit(0);
+								break;
 						}
 					}
-					jumpspeed--;
-					isCharaLarge=!isCharaLarge;
-					this.Draw();
-					sw.Reset();
-					sw.Start();
-				} 
-				Check();
+					TimeSpan ts = sw.Elapsed;
+					if(ts.TotalSeconds>=0.2)
+					{
+						if(jumpspeed!=0){
+							for(int a = System.Math.Abs(jumpspeed);a>-1;a--)
+							{
+								if(jumpspeed<0)
+								{
+									if(y<(this.hidemap.Length-1))
+									{
+										if(this.hidemap[y+1][x]=='-')
+										{
+											y--;
+											jumpspeed=0;
+										}
+									}
+									y++;
+								}
+								if(jumpspeed>0)
+								{
+									if(y>0)
+									{
+										if(this.hidemap[y-1][x] =='-')
+											y++;
+									}
+									y--;
+								}
+							}
+						}
+						jumpspeed--;
+						isCharaLarge=!isCharaLarge;
+						this.Draw();
+						sw.Reset();
+						sw.Start();
+					} 
+					Check();
+				}
 			}
 		}
 		public void Draw()
@@ -137,46 +202,112 @@ namespace Game
 		public static void Main()
 		{
 			Console.Clear();
-			Game.Mario[] mario = new Game.Mario[3];
+			Game.Mario[] mario = new Game.Mario[2];
 			mario[0] = new Game.Mario();
 			mario[0].map = new string[]{
-				"+----------------------------------------+",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"+----------------------------------------+",};
+					"+----------------------------------------+",
+					"|>                                       |",
+					"|-----------------        -------------  |",
+					"|>                                    |  |",
+					"|-----        -------------------------  |",
+					"|>                                    |  |",
+					"|------------------       ------------- -|",
+					"|>                                    |  |",
+					"|------       -------------------------A |",
+					"|>                                    |- |",
+					"|------------------       -------------  |",
+					"|>                                    | -|",
+					"|------      --------------------------  |",
+					"|>                                    |A |",
+					"|-----------------        -------------- |",
+					"|>                                    |  |",
+					"|------       ------------------------- -|",
+					"|>                                    |  |",
+					"|------                     -----------A |",
+					"|>                                   | - |",
+					"|      AAAAAAA                       |  G|",
+					"+----------------------------------------+",};
 			mario[0].hidemap = new string[]{
-				"+----------------------------------------+",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                                        |",
-				"|                    AAAAAAAAAAAAAAAAAAAA|",
-				"+----------------------------------------+",};
-			mario[0].Draw();
-			mario[0].Run();
+					"+----------------------------------------+",
+					"|>                                       |",
+					"|-----------------        -------------  |",
+					"|>                                    |  |",
+					"|-----        -------------------------  |",
+					"|>            O                       |  |",
+					"|------------------       ------------- -|",
+					"|>                                    |  |",
+					"|------       ------- -----------------A |",
+					"|>                                    |- |",
+					"|------------------       -------------  |",
+					"|>                                    | -|",
+					"|------      -------- -----------------  |",
+					"|>                                    |A |",
+					"|-----------------        -------------- |",
+					"|>                                    |  |",
+					"|------       -------   --------------- -|",
+					"|>                                    |  |",
+					"|------                     -----------A |",
+					"|>                                     - |",
+					"|>     AAAAAAA       A                  G|",
+					"+----------------------------------------+",};
+			mario[1] = new Game.Mario();
+			mario[1].map = new string[]{
+					"+----------------------------------------+",
+					"|>                                       |",
+					"|-----------------        -------------  |",
+					"|>                                    |  |",
+					"|-----        -------------------------  |",
+					"|>                                    |  |",
+					"|------------------       ------------- -|",
+					"|>                                    |  |",
+					"|------       -------------------------A |",
+					"|>                                    |- |",
+					"|------------------       -------------  |",
+					"|>                                    | -|",
+					"|------      --------------------------  |",
+					"|>                                    |A |",
+					"|-----------------        -------------- |",
+					"|>                                    |  |",
+					"|------       ------------------------- -|",
+					"|>                                    |  |",
+					"|------                     -----------A |",
+					"|>                                   | - |",
+					"|      AAAAAAA                       |  G|",
+					"+----------------------------------------+",};
+			mario[1].hidemap = new string[]{
+					"+----------------------------------------+",
+					"|>                                       |",
+					"|-----------------        -------------  |",
+					"|>                                    |  |",
+					"|-----        -------------------------  |",
+					"|>            O                       |  |",
+					"|------------------       ------------- -|",
+					"|>                                    |  |",
+					"|------       ------- -----------------A |",
+					"|>                                    |- |",
+					"|------------------       -------------  |",
+					"|>                                    | -|",
+					"|------      -------- -----------------  |",
+					"|>                                    |A |",
+					"|-----------------        -------------- |",
+					"|>                                    |  |",
+					"|------       -------   --------------- -|",
+					"|>                                    |  |",
+					"|------                     -----------A |",
+					"|>                                     - |",
+					"|>     AAAAAAA       A                  G|",
+					"+----------------------------------------+",};
+			int level=1;
+			foreach(Mario tmpmario in mario)
+			{
+				Console.Clear();
+				Console.SetCursorPosition(Console.WindowWidth/2-5,Console.WindowHeight/2);
+				Console.Write("level{0}",level);
+				Console.ReadKey();
+				Console.Clear();
+				tmpmario.Run();
+				level++;
+			}
 
 		}
 	}
