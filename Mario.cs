@@ -7,8 +7,9 @@ namespace Game
 		private static int x=3,y=5;
 		public string[] map;
 		public string[] hidemap;
+		public string[] movemap;
 		private bool isCharaLarge=true;
-		private static int jumpspeed=-2;
+		private static int jumpspeed=-2,interval=0;
 		private static bool isClear = false;
 		private static bool isGameOver = false;
 		public bool isbeforeFinal=false;
@@ -16,6 +17,7 @@ namespace Game
 		{
 			this.map=null;
 			this.hidemap=null;
+			this.movemap=null;
 		}
 		private void Check(bool flag)
 		{
@@ -122,15 +124,15 @@ namespace Game
 			{
 				case 1:// <<
 					x--;
-					if(x<1)
-						x=1;
+					if(x<0)
+						x=0;
 					if(this.hidemap[y][x]=='-' || this.hidemap[y][x]=='|')
 						x++;
 					break;
 				case 2:// >>
 					x++;
-					if(x>(this.hidemap[0].Length-2))
-						x=this.hidemap[0].Length-2;
+					if(x>(this.hidemap[0].Length-1))
+						x=this.hidemap[0].Length-1;
 					if(this.hidemap[y][x]=='-' || this.hidemap[y][x]=='|')
 						x--;
 					break;
@@ -150,12 +152,21 @@ namespace Game
 		}
 		public void Run()
 		{
+			string[] fmap = new string[map.Length];
+			string[] fhidemap=new string[hidemap.Length];
+			for(int i=0;i<map.Length;i++)
+				fmap[i]=map[i];
+			for(int i=0;i<hidemap.Length;i++)
+				fhidemap[i]=hidemap[i];
+			Array.Copy(fmap,map,map.Length);
+			Array.Copy(fhidemap,hidemap,hidemap.Length);
 			if(this.map==null || this.hidemap==null)
 				return;
 			isClear=false;
 			Console.CursorVisible=false;
 			while(!isClear)
 			{
+				interval=0;
 				Stopwatch sw = new Stopwatch();
 				sw.Start();
 				Console.Clear();
@@ -201,6 +212,7 @@ namespace Game
 					TimeSpan ts = sw.Elapsed;
 					if(ts.TotalSeconds>=0.2)
 					{
+						interval++;
 						for(int a = System.Math.Abs(jumpspeed);a>0;a--)
 						{
 							if(jumpspeed<0)
@@ -224,11 +236,96 @@ namespace Game
 									{
 										y++;
 									}
+								}else
+								{
+									y++;
 								}
 								y--;
 							}
 							this.Draw();
 							this.Check(true);
+						}
+						if(this.movemap!=null)
+						{
+							for(int i=0;i<movemap.Length;i++)
+							{
+								for(int j=0;j<movemap[i].Length;j++)
+								{
+									if(movemap[i][j]=='=')
+									{
+										int mod=interval%10;
+										switch(mod)
+										{
+											case 0:
+												if(0<j)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j-mod]=fmap[i][j];
+													if(movemap[i][j-1]!='=')
+													tmpcharArray[j-1]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j]=fhidemap[i][j];
+													if(movemap[i][j-1]!='=')
+													tmpcharArray[j-1]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 1:
+											case 2:
+											case 3:
+											case 4:
+												if(0<j)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j-mod]=fmap[i][j];
+													if(movemap[i][j+1]!='=')
+													tmpcharArray[j-mod+1]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j-mod]=fhidemap[i][j];
+													if(movemap[i][j+1]!='=')
+													tmpcharArray[j-mod+1]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 5:
+												if(map[i].Length-2>j)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j-5]=fmap[i][j];
+													if(movemap[i][j-4]!='=')
+													tmpcharArray[j-4]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j-5]=fhidemap[i][j];
+													if(movemap[i][j-4]!='=')
+													tmpcharArray[j-4]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 6:
+											case 7:
+											case 8:
+											case 9:
+												if(map[i].Length-2>j)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j+mod-10]=fmap[i][j];
+													if(movemap[i][j-1]!='=')
+														tmpcharArray[j+mod-11]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j+mod-10]=fhidemap[i][j];
+													if(movemap[i][j-1]!='=')
+														tmpcharArray[j+mod-11]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+										}
+									}
+								}
+							}
 						}
 						jumpspeed--;
 						isCharaLarge=!isCharaLarge;
@@ -267,47 +364,82 @@ namespace Game
 			Console.CursorVisible=false;
 			string tmptitle=Console.Title;
 			Console.Title="Mario";
-			Console.ForegroundColor=ConsoleColor.Black;
-			Console.BackgroundColor=ConsoleColor.White;
 			Console.Clear();
 			Game.Mario[] mario = new Game.Mario[1];
-			mario[0]=new Game.Mario();
-			mario[0].map=new string[]{
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					" G                  ",
-			};
-			mario[0].map=new string[]{
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					"                    ",
-					" G              O   ",
-			};
-			int level=1;
+			mario[0] = new Game.Mario();
+			mario[0].map = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|        C        C                      |",
+					"+----------------------------------------+",};
+			mario[0].hidemap = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|O       A        A                      |",
+					"+----------------------------------------+",};
+			mario[0].movemap = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|        =        =                      |",
+					"+----------------------------------------+",};
 			foreach(Mario tmpmario in mario)
 			{
 				Console.Clear();
 				tmpmario.Run();
-				level++;
 			}
 			Console.Clear();
 			Console.SetCursorPosition(Console.WindowWidth/2-3,Console.WindowHeight/2);
