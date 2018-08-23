@@ -251,7 +251,7 @@ namespace Game
 							{
 								for(int j=0;j<movemap[i].Length;j++)
 								{
-									if(movemap[i][j]=='=')
+									if(movemap[i][j]=='<')
 									{
 										int mod=interval%10;
 										switch(mod)
@@ -261,12 +261,12 @@ namespace Game
 												{
 													char[] tmpcharArray=map[i].ToCharArray();
 													tmpcharArray[j-mod]=fmap[i][j];
-													if(movemap[i][j-1]!='=')
+													if(movemap[i][j-1]!='<'&&movemap[i][j-1]!='-')
 													tmpcharArray[j-1]=' ';
 													map[i]=new string(tmpcharArray);
 													tmpcharArray=hidemap[i].ToCharArray();
 													tmpcharArray[j]=fhidemap[i][j];
-													if(movemap[i][j-1]!='=')
+													if(movemap[i][j-1]!='<'&&movemap[i][j-1]!='-')
 													tmpcharArray[j-1]=' ';
 													hidemap[i]=new string(tmpcharArray);
 												}
@@ -279,12 +279,12 @@ namespace Game
 												{
 													char[] tmpcharArray=map[i].ToCharArray();
 													tmpcharArray[j-mod]=fmap[i][j];
-													if(movemap[i][j+1]!='=')
+													if(movemap[i][j+1]!='<'&&movemap[i][j-mod+1]!='-')
 													tmpcharArray[j-mod+1]=' ';
 													map[i]=new string(tmpcharArray);
 													tmpcharArray=hidemap[i].ToCharArray();
 													tmpcharArray[j-mod]=fhidemap[i][j];
-													if(movemap[i][j+1]!='=')
+													if(movemap[i][j+1]!='<'&&movemap[i][j-mod+1]!='-')
 													tmpcharArray[j-mod+1]=' ';
 													hidemap[i]=new string(tmpcharArray);
 												}
@@ -294,12 +294,13 @@ namespace Game
 												{
 													char[] tmpcharArray=map[i].ToCharArray();
 													tmpcharArray[j-5]=fmap[i][j];
-													if(movemap[i][j-4]!='=')
+													if(movemap[i][j-4]!='<')
+													if(movemap[i][j-4]!='<'&&movemap[i][j-4]!='-')
 													tmpcharArray[j-4]=' ';
 													map[i]=new string(tmpcharArray);
 													tmpcharArray=hidemap[i].ToCharArray();
 													tmpcharArray[j-5]=fhidemap[i][j];
-													if(movemap[i][j-4]!='=')
+													if(movemap[i][j-4]!='<'&&movemap[i][j-4]!='-')
 													tmpcharArray[j-4]=' ';
 													hidemap[i]=new string(tmpcharArray);
 												}
@@ -312,13 +313,86 @@ namespace Game
 												{
 													char[] tmpcharArray=map[i].ToCharArray();
 													tmpcharArray[j+mod-10]=fmap[i][j];
-													if(movemap[i][j-1]!='=')
+													if(movemap[i][j-1]!='<'&&movemap[i][j+mod-11]!='-')
 														tmpcharArray[j+mod-11]=' ';
 													map[i]=new string(tmpcharArray);
 													tmpcharArray=hidemap[i].ToCharArray();
 													tmpcharArray[j+mod-10]=fhidemap[i][j];
-													if(movemap[i][j-1]!='=')
+													if(movemap[i][j-1]!='<'&&movemap[i][j+mod-11]!='-')
 														tmpcharArray[j+mod-11]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+										}
+									}
+									if(movemap[i][j]=='>')
+									{
+										int mod=interval%10;
+										switch(mod)
+										{
+											case 0:
+												if(0<j)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j]=fmap[i][j];
+													if(movemap[i][j+1]!='>'&&movemap[i][j+1]!='-')
+													tmpcharArray[j+1]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j]=fhidemap[i][j];
+													if(movemap[i][j+1]!='>'&&movemap[i][j+1]!='-')
+													tmpcharArray[j+1]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 1:
+											case 2:
+											case 3:
+											case 4:
+												if(0<j && j+1<movemap[i].Length-1)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j+mod]=fmap[i][j];
+													if(movemap[i][j-1]!='>'&&movemap[i][j+mod-1]!='-')
+													tmpcharArray[j+mod-1]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j+mod]=fhidemap[i][j];
+													if(movemap[i][j-1]!='>'&&movemap[i][j+mod-1]!='-')
+													tmpcharArray[j+mod-1]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 5:
+												if(map[i].Length-1>j && j-5>0)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j+5]=fmap[i][j];
+													if(movemap[i][j-1]!='>'&&movemap[i][j+4]!='-')
+													tmpcharArray[j+4]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j+5]=fhidemap[i][j];
+													if(movemap[i][j-1]!='>'&&movemap[i][j+4]!='-')
+													tmpcharArray[j+4]=' ';
+													hidemap[i]=new string(tmpcharArray);
+												}
+												break;
+											case 6:
+											case 7:
+											case 8:
+											case 9:
+												if(map[i].Length-2>j && j+mod-11 >0)
+												{
+													char[] tmpcharArray=map[i].ToCharArray();
+													tmpcharArray[j-mod+10]=fmap[i][j];
+													if(movemap[i][j+1]!='>'&&movemap[i][j-mod+11]!='-')
+													tmpcharArray[j-mod+11]=' ';
+													map[i]=new string(tmpcharArray);
+													tmpcharArray=hidemap[i].ToCharArray();
+													tmpcharArray[j-mod+10]=fhidemap[i][j];
+													if(movemap[i][j+1]!='>'&&movemap[i][j-mod+11]!='-')
+													tmpcharArray[j-mod+11]=' ';
 													hidemap[i]=new string(tmpcharArray);
 												}
 												break;
@@ -365,7 +439,7 @@ namespace Game
 			string tmptitle=Console.Title;
 			Console.Title="Mario";
 			Console.Clear();
-			Game.Mario[] mario = new Game.Mario[4];
+			Game.Mario[] mario = new Game.Mario[7];
 			mario[0] = new Game.Mario();
 			mario[0].map = new string[]{
 					"+----------------------------------------+",
@@ -463,97 +537,330 @@ namespace Game
 			mario[2]= new Mario();
 			mario[2].map = new string[]{
 					"+----------------------------------------+",
-					"| |                     |       |        |",
-					"| |                     |       |        |",
-					"| |                     |       |        |",
-					"| |                |    |       |        |",
-					"| |                |    |       |        |",
-					"| |H|   |        = |    V       |        |",
-					"| |H|   |          |            |        |",
-					"| |H|   |          |            V    N   |",
-					"| |H|   |          |    =            E   |",
-					"| |H|   |    =     |    |            X   |",
-					"| |H|AA |          |    |            T   |",
-					"| |H|-- |          |    |       =        |",
-					"| |H|   |          |    |       |    |   |",
-					"| |H|   |=         |    |       |    V   |",
-					"| |H|   |          |    |       |        |",
-					"| |H|   |          |    |       |        |",
-					"| |H|   |          |    |       |   | |  |",
-					"| |H|        =     |    |       |   | |  |",
-					"| |H|  ---         |    |       |   | |  |",
-					"|   |              |    |       |   | |  |",
+					"|       |               |       |        |",
+					"|       |               |       |        |",
+					"|------ |               |       |        |",
+					"|       |          |    |       |        |",
+					"|    |  |          |    |       |        |",
+					"|    |  |        = |    V       |        |",
+					"|    |  |          |            |        |",
+					"| ------|          |            V    N   |",
+					"|       |          |    =            E   |",
+					"|  |  | |    =     |    |            X   |",
+					"|  |  | |          |    |            T   |",
+					"|  |  | |          |    |       =        |",
+					"|------ |          |    |       |    |   |",
+					"|       |=         |    |       |    V   |",
+					"|       |          |    |       |        |",
+					"|       |          |    |       |        |",
+					"|  -A-A--          |    |       |   | |  |",
+					"|            =     |    |       |   | |  |",
+					"|      ---         |    |       |   | |  |",
+					"|                  |    |       |   | |  |",
 					"|----AAAAAAAAAAAAAA|AAAA|AAAAAAA|AAA| |AA|",};
 			mario[2].hidemap = new string[]{
 					"+----------------------------------------+",
-					"|O|                     |       |        |",
-					"| |                     |       |        |",
-					"| |                     |       |        |",
-					"| |                A    |       |        |",
-					"| |                |    |       |        |",
-					"| |H-   A        = |    V       |        |",
-					"| |H|   |        - |            |        |",
-					"| |H|   |          |            V        |",
-					"| |H|   |          |    =                |",
-					"| |H|   |    =     |    -                |",
-					"| |H|AA |    -     |    |                |",
-					"| |H|-- |          |    |       =        |",
-					"| |H|   |          |    |       -        |",
-					"| |H|   |=         |    |       |        |",
-					"| |H|   |-         |    |       |        |",
-					"| |H|   |          |    |       |        |",
-					"| |H|   |          |    |       |   A A  |",
-					"| |H|        =     |    |       |   | |  |",
-					"| -H|  ---   -     |    |       |   | |  |",
-					"|   |              |    |       |   | |  |",
+					"|O      |               |       |        |",
+					"|       |               |       |        |",
+					"|------ |               |       |        |",
+					"|       |          A    |       |        |",
+					"|    A  |          |    |       |        |",
+					"|    |  |        = |    V       |        |",
+					"|    |  |        - |            |        |",
+					"| ------|          |            V        |",
+					"|       |          |    =                |",
+					"|  A  A |    =     |    -                |",
+					"|  |  | |    -     |    |                |",
+					"|  |  | |          |    |       =        |",
+					"|------ |          |    |       -        |",
+					"|       |=         |    |       |        |",
+					"|       |-         |    |       |        |",
+					"|       |          |    |       |        |",
+					"|  -A-A--          |    |       |   A A  |",
+					"|            =     |    |       |   | |  |",
+					"|      ---   -     |    |       |   | |  |",
+					"|                  |    |       |   | |  |",
 					"|----AAAAAAAAAAAAAA|AAAA|AAAAAAA|AAA|G|AA|",};
 			mario[3]= new Mario();
 			mario[3].map = new string[]{
-					"+VVVVVVVVVVVVVVVVVVVVVVVV----------------+",
-					"|                                |       |",
-					"|                                |       |",
-					"|                                |       |",
-					"|                        A       |       |",
-					"|                        |       |       |",
-					"| -=====-=====-=====-----|=   |  |       |",
-					"| -----------------------|-   |  |       |",
-					"|       |   |   |   |    |    |  |       |",
-					"|--     |   |   |   |   N|    |  V       |",
-					"|           |   |   |   E|    |          |",
-					"|    --     |   |   |   X|   =|          |",
-					"|               |   |   T|   -|  A       |",
-					"|        --     |   |    |    |  |       |",
-					"|                   |   ||    |  |       |",
-					"|            --     |   V|    |  |   =   |",
-					"|                        |=   |  |   -   |",
-					"|                --    | |-   |  |       |",
-					"|                      | |    |  |       |",
-					"|                   --=| |    |  |       |",
-					"|                      | |       |       |",
-					"+AAAAAAAAAAAAAAAAAAAAA | ----=---|AAAAAAA+",};
+					"+----------------------------------------+",
+					"|                                   |    |",
+					"|                                   |    |",
+					"|                       A           |    |",
+					"|                       |           |    |",
+					"|                       |      m    |    |",
+					"|                       |=--------- |    |",
+					"|                       |           |    |",
+					"|                       |           |    |",
+					"|                       |      m    |    |",
+					"|N                      | ---------=|    |",
+					"|E                      |           |    |",
+					"|X                      |           |    |",
+					"|T                      |      m    |    |",
+					"|                       |=--------- |    |",
+					"||                      |           |    |",
+					"|V                      |           |    |",
+					"|                       |       m   |    |",
+					"| |                     |  --------=|    |",
+					"| |                     |           -    |",
+					"| |     m    m    m     |                |",
+					"+ ---------------------------------------+",};
 			mario[3].hidemap = new string[]{
-					"+VVVVVVVVVVVVVVVVVVVVVVVV----------------+",
-					"|                                |   O   |",
-					"|                                |       |",
-					"|                                |       |",
-					"|                        A       |       |",
-					"|                        |       |       |",
-					"| -=====-=====-=====-----|=   |  |       |",
-					"| -----------------------|-   |  |       |",
-					"|       |   |   |   |    |    |  |       |",
-					"|--     |   |   |   |    |    |  V       |",
-					"|           |   |   |    |    |          |",
-					"|    --     |   |   |    |   =|          |",
-					"|               |   |    |   -|  A       |",
-					"|        --     |   |    |    |  |       |",
-					"|                   |    |    |  |       |",
-					"|            --     |    |    |  |   =   |",
-					"|                        |=   |  |   -   |",
-					"|                --    A |-   |  |       |",
-					"|                      | |    |  |       |",
-					"|                   --=| |    |  |       |",
-					"|                     -| |       |       |",
-					"+AAAAAAAAAAAAAAAAAAAAA |G----=---|AAAAAAA+",};
+					"+----------------------------------------+",
+					"|                                   |O   |",
+					"|                                   |    |",
+					"|                       A           |    |",
+					"|                       |           |    |",
+					"|                       |      A    |    |",
+					"|                       |=--------- |    |",
+					"|                       |-          |    |",
+					"|                       |           |    |",
+					"|                       |      A    |    |",
+					"|                       | ---------=|    |",
+					"|                       |          -|    |",
+					"|                       |           |    |",
+					"|                       |      A    |    |",
+					"|                       |=--------- |    |",
+					"|                       |-          |    |",
+					"|                       |           |    |",
+					"|                       |       A   |    |",
+					"| -                     |  --------=|    |",
+					"| |                     |          --    |",
+					"|G|     A    A    A     |                |",
+					"+----------------------------------------+",};
+			mario[3].movemap = new string[]{
+					"+----------------------------------------+",
+					"|                                    O   |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                              <         |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                              <         |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                              <         |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                               <        |",
+					"|                                        |",
+					"|                                        |",
+					"|       <    <    <                      |",
+					"+----------------------------------------+",};
+			mario[4]= new Mario();
+			mario[4].map = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|               m         m          m   |",
+					"|-------------------------------------   |",
+					"|                                        |",
+					"|                                        |",
+					"|       m      m      m      m           |",
+					"|  --------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                       N|",
+					"|                                       E|",
+					"|                                       X|",
+					"|--------------       -----  ----     --T|",
+					"|                                        |",
+					"|                                       ||",
+					"|                                       V|",
+					"|                                        |",
+					"|                                      | |",
+					"+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA| |",};
+			mario[4].hidemap = new string[]{
+					"+----------------------------------------+",
+					"|O                                       |",
+					"|                                        |",
+					"|                                        |",
+					"|               A         A          A   |",
+					"|-------------------------------------   |",
+					"|                                        |",
+					"|                                        |",
+					"|       A      A      A      A           |",
+					"|  --------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|--------------       -----  ----     -- |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                      - |",
+					"+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA|G|",};
+			mario[4].movemap = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|               <         <          <   |",
+					"|-------------------------------------   |",
+					"|                                        |",
+					"|                                        |",
+					"|       <      <      <      <           |",
+					"|  --------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|--------------       =====           == |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                      | |",
+					"+----------------------------------------+",};
+			mario[5]= new Mario();
+			mario[5].map = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|              m           m             |",
+					"|    ------------------------------------|",
+					"|                                        |",
+					"|                    N                   |",
+					"|                    E                   |",
+					"|                    X                   |",
+					"|              m     T                   |",
+					"|------------------                      |",
+					"|                    |                   |",
+					"|                    V                   |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                     <<                 |",
+					"|                                        |",
+					"|                >>                      |",
+					"|                   | |                  |",
+					"+AAAAAAAAAAAAAAAAAAA| |AAAAAAAAAAAAAAAAAA|",};
+			mario[5].hidemap = new string[]{
+					"+----------------------------------------+",
+					"|                                       O|",
+					"|                                        |",
+					"|              A           A             |",
+					"|    ------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|              A                         |",
+					"|------------------                      |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                     <<                 |",
+					"|                                        |",
+					"|                >>                      |",
+					"|                   | |                  |",
+					"+AAAAAAAAAAAAAAAAAAA|G|AAAAAAAAAAAAAAAAAA|",};
+			mario[5].movemap = new string[]{
+					"+----------------------------------------+",
+					"|                                       O|",
+					"|                                        |",
+					"|              >           <             |",
+					"|    ------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|              <                         |",
+					"|------------------                      |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                     <<                 |",
+					"|                                        |",
+					"|                >>                      |",
+					"|                   | |                | |",
+					"+AAAAAAAAAAAAAAAAAAA| |AAAAAAAAAAAAAAAA| |",};
+			mario[6]= new Mario();
+			mario[6].map = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                    m            m      |",
+					"|--------------------------------------  |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|    m     m m    m m     m m     m      |",
+					"|   -------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|--------------------------------------- |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA|G|",};
+			mario[6].hidemap = new string[]{
+					"+----------------------------------------+",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                    A            A      |",
+					"|--------------------------------------  |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|   OA     A A    A A     A A     A      |",
+					"|   -------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|--------------------------------------- |",
+					"|                                      A |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA|G|",};
+			mario[6].movemap = new string[]{
+					"+----------------------------------------+",
+					"|                    O                   |",
+					"|                                        |",
+					"|                                        |",
+					"|                    >            <      |",
+					"|--------------------------------------  |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|    >     > <    > <     > <     >      |",
+					"|   -------------------------------------|",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|                                        |",
+					"|>>>>>>>>------<<->>-----<<->>-------<<< |",
+					"|                                      - |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"|                                      | |",
+					"+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA|G|",};
 			foreach(Mario tmpmario in mario)
 			{
 				Console.Clear();
