@@ -456,7 +456,7 @@ namespace Game
 					using (var xmlReader
 							= System.Xml.XmlReader.Create(streamReader, xmlSettings))
 					{
-						mario = (Game.Mario[])xmlSerializer2.Deserialize(xmlReader); // Åi3Åj
+						mario = (Game.Mario[])xmlSerializer2.Deserialize(xmlReader);
 					}
 			}catch{
 			mario = new Game.Mario[8];
